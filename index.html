@@ -1,14 +1,83 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="UTF-8">
-    <title>Saufex Docs</title>
-  </head>
-  <body>
-    <h1>Saufex Documentatie</h1>
-    <ul>
-      <li><a href="overview.pdf">Overzicht</a></li>
-      <li><a href="manual.pdf">Handleiding</a></li>
-    </ul>
-  </body>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Saufex Documentatie</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #fff;
+      padding: 2rem;
+      color: #111;
+    }
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 1.5rem;
+    }
+    .grid {
+      display: grid;
+      gap: 1rem;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    }
+    .file {
+      border: 1px solid #eee;
+      border-radius: 8px;
+      padding: 1rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      transition: box-shadow 0.2s ease;
+    }
+    .file:hover {
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    .file a {
+      text-decoration: none;
+      color: #0066cc;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .file a svg {
+      width: 20px;
+      height: 20px;
+      fill: #0066cc;
+      margin-left: 0.5rem;
+      flex-shrink: 0;
+    }
+  </style>
+</head>
+<body>
+  <h1>Saufex Documentatie</h1>
+  <div class="grid" id="file-list"></div>
+
+  <script>
+    const owner = "BramDrog";
+    const repo = "docs.saufex.eu";
+    const branch = "main"; // Of 'master' indien van toepassing
+
+    fetch(`https://api.github.com/repos/${owner}/${repo}/contents/?ref=${branch}`)
+      .then(res => res.json())
+      .then(files => {
+        const list = document.getElementById("file-list");
+        files
+          .filter(file => file.name.endsWith(".pdf"))
+          .forEach(file => {
+            const item = document.createElement("div");
+            item.className = "file";
+            item.innerHTML = `
+              <a href="${file.name}" target="_blank">
+                ${file.name}
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14 3v4h4l-5 5-5-5h4V3h2zm-9 9v8h14v-8h2v10H3V12h2z"/></svg>
+              </a>
+            `;
+            list.appendChild(item);
+          });
+      })
+      .catch(err => {
+        document.getElementById("file-list").innerHTML = "<p>Bestanden konden niet worden geladen.</p>";
+        console.error(err);
+      });
+  </script>
+</body>
 </html>
