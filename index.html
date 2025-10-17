@@ -16,33 +16,48 @@
     }
     h1 { font-size: 2rem; margin-bottom: 1.5rem; }
 
-    /* Grid: equal-height rows + stretchy cards */
+    /* Grid layout with equal-height rows */
     .grid {
       display: grid;
       gap: 1rem;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      grid-auto-rows: 1fr;            /* make items in the same row equal height */
-      align-items: stretch;           /* stretch items to fill row height */
+      grid-auto-rows: 1fr;
+      align-items: stretch;
     }
 
+    /* Card styling */
     .file {
-      display: flex;                  /* allow inner content to push footer down */
+      display: flex;
       flex-direction: column;
-      height: 100%;                   /* fill the grid row */
+      height: 100%;
       border: 1px solid #eee;
       border-radius: 8px;
       padding: 1rem;
+      background: #fff;
       box-shadow: 0 2px 4px rgba(0,0,0,0.05);
       transition: box-shadow 0.2s ease, transform 0.1s ease;
-      background: #fff;
     }
     .file:hover {
       box-shadow: 0 6px 16px rgba(0,0,0,0.12);
       transform: translateY(-1px);
     }
 
+    /* File name + meta */
+    .name {
+      font-weight: 600;
+      margin-bottom: .25rem;
+      white-space: pre-wrap;
+      word-break: break-word;
+      overflow-wrap: anywhere;
+    }
+    .meta {
+      font-size: .875rem;
+      color: #555;
+    }
+
+    /* Link at bottom */
     .file a {
-      margin-top: auto;               /* stick link to bottom of the card */
+      margin-top: auto;
       display: inline-flex;
       align-items: center;
       justify-content: space-between;
@@ -50,23 +65,14 @@
       text-decoration: none;
       color: var(--brand);
       font-weight: 600;
-      word-break: break-word;         /* long filenames won’t blow up the layout */
+      word-break: break-word;
+      overflow-wrap: anywhere;
     }
     .file a svg {
       width: 20px;
       height: 20px;
       fill: var(--brand);
       flex-shrink: 0;
-    }
-
-    /* Optional: filename styling at top for better balance */
-    .name {
-      font-weight: 600;
-      margin-bottom: .25rem;
-    }
-    .meta {
-      font-size: .875rem;
-      color: #555;
     }
   </style>
 </head>
@@ -88,11 +94,14 @@
         files
           .filter(f => f.type === "file" && f.name.toLowerCase().endsWith(".pdf"))
           .forEach(file => {
+            // Add zero-width spaces after underscores for line breaks
+            const safeName = file.name.replaceAll('_', '_\u200B');
+
             const item = document.createElement("div");
             item.className = "file";
             item.innerHTML = `
-              <div class="name">${file.name}</div>
-              <div class="meta">${(file.size/1024).toFixed(1)} KB</div>
+              <div class="name">${safeName}</div>
+              <div class="meta">${(file.size / 1024).toFixed(1)} KB</div>
               <a href="${file.download_url}" target="_blank" rel="noopener">
                 Openen
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
